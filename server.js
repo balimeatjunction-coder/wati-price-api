@@ -33,26 +33,38 @@ const prices = {
 const fixedItems = ["Paya", "Bheja", "Mundi"];
 
 // =========================
-// DELIVERY ZONES (YOUR FINAL)
+// DELIVERY ZONES
 // =========================
 const deliveryZones = {
-    // ₹20
     "Fashi Pool": 20,
     "Jilha Peth": 20,
     "Old Dhule": 20,
     "Datta Mandir Chowk": 20,
 
-    // ₹40
     "Deopur": 40,
     "Panchavati": 40,
     "Jaihind Colony": 40,
     "Bhim Nagar": 40,
     "Wadibhokar": 40,
 
-    // ₹60
     "Nakane Road": 60,
     "Railway Station": 60
 };
+
+// =========================
+// FUNCTION: SAFE AREA MATCH
+// =========================
+function getDeliveryCharge(area) {
+    if (!area) return 0;
+
+    const cleanArea = area.toLowerCase().trim();
+
+    const matchedArea = Object.keys(deliveryZones).find(
+        key => key.toLowerCase().trim() === cleanArea
+    );
+
+    return matchedArea ? deliveryZones[matchedArea] : 0;
+}
 
 // =========================
 // API ROUTE
@@ -77,7 +89,7 @@ app.post("/price", (req, res) => {
     // FIXED ITEMS (NO WEIGHT)
     // =========================
     if (fixedItems.includes(product)) {
-        const deliveryCharge = deliveryZones[area] || 0;
+        const deliveryCharge = getDeliveryCharge(area);
 
         return res.json({
             item_price: price,
@@ -95,7 +107,6 @@ app.post("/price", (req, res) => {
 
     let quantity = 0;
 
-    // Normalize input
     const w = weight.toLowerCase().trim();
 
     if (w.includes("kg")) {
@@ -114,7 +125,7 @@ app.post("/price", (req, res) => {
     // =========================
     // DELIVERY CALCULATION
     // =========================
-    const deliveryCharge = deliveryZones[area] || 0;
+    const deliveryCharge = getDeliveryCharge(area);
 
     // =========================
     // FINAL TOTAL
