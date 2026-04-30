@@ -12,6 +12,7 @@ const prices = {
     "Broiler": 220,
     "Cockerel": 380,
     "Gavran": 760,
+    "Gavran (Desi Chicken)": 760, // ✅ added fix
     "Boneless": 280,
     "Chicken Kheema": 280,
     "Kaleji": 200,
@@ -52,18 +53,20 @@ const deliveryZones = {
 };
 
 // =========================
-// FUNCTION: SAFE AREA MATCH
+// IMPROVED DELIVERY FUNCTION
 // =========================
 function getDeliveryCharge(area) {
     if (!area) return 0;
 
     const cleanArea = area.toLowerCase().trim();
 
-    const matchedArea = Object.keys(deliveryZones).find(
-        key => key.toLowerCase().trim() === cleanArea
-    );
+    const zoneMap = {};
 
-    return matchedArea ? deliveryZones[matchedArea] : 0;
+    Object.keys(deliveryZones).forEach(key => {
+        zoneMap[key.toLowerCase().trim()] = deliveryZones[key];
+    });
+
+    return zoneMap[cleanArea] || 0;
 }
 
 // =========================
